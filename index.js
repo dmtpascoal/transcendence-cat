@@ -248,4 +248,4 @@ window.onload = function () {
         window.requestAnimationFrame(drawGame);
 
     }
-}
+};
