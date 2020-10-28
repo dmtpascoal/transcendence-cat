@@ -33,50 +33,18 @@ window.onload = function () {
         smashSounds.push(smash);
     }
 
-    let player;
+    let cat;
     let foods = [];
     let numberOfFoods = 15;
 
-    //Player constructor
-    function Player() {
-        this.gameOver = false;
-        this.score = 0;
-        this.foodsCollected = 0;
-        this.foodsMissed = 0;
-        this.playerWidth = 230;
-        this.playerHeight = 230;
-        this.playerSpeed = 50;
-        this.x = 400;
-        this.y = 415;
-        this.playerImage = new Image();
-        this.playerImage.src = 'Images/cat.png';
-
-        //Draws the player
-        this.render = function () {
-            context.drawImage(this.playerImage, this.x, this.y);
-        }
-
-        //Moves the player left
-        this.moveLeft = function () {
-            if (this.x > 0) {
-                this.x -= this.playerSpeed;
-            }
-        }
-
-        //Moves the player right
-        this.moveRight = function () {
-            if (this.x < canvas.width - this.playerWidth) {
-                this.x += this.playerSpeed;
-            }
-        }
-    }
+   
 
     //Food constructor
     function Food() {
         this.foodNumber = Math.floor(Math.random() * 5);
         this.foodType = "";
         this.foodScore = 0;
-        this.foodWidth = 50;
+        this.foodWidth = 100;
         this.foodHeight = 50;
         this.foodImage = new Image();
         this.foodSpeed = Math.floor(Math.random() * 3 + 1);
@@ -87,28 +55,31 @@ window.onload = function () {
         //which is generated randomly
         this.chooseFood = function () {
             if (this.foodNumber == 0) {
-                this.foodType = "banana";
-                this.foodScore = 5 * this.foodSpeed;
+                this.foodType = "shrimp";
+                this.foodScore = 10 * this.foodSpeed;
                 this.foodImage.src = 'Images/shrimp.png';
             } else if (this.foodNumber == 1) {
-                this.foodType = "apple";
+                this.foodType = "fish";
                 this.foodScore = 10 * this.foodSpeed;
                 this.foodImage.src = 'Images/fish.png';
             } else if (this.foodNumber == 2) {
-                this.foodType = "orange";
+                this.foodType = "birds";
                 this.foodScore = 15 * this.foodSpeed;
                 this.foodImage.src = 'Images/bird.png';
             } else if (this.foodNumber == 4) {
                 this.foodType = "melon";
-                this.foodScore = 25 * this.foodSpeed;
+                this.foodScore = 5 * this.foodSpeed;
                 this.foodImage.src = 'Images/melon2.png';
             }
+
+            return this.foodType;
         }
 
         //Makes the food descend.
-        //While falling checks if the food has been caught by the player
+        //While falling checks if the food has been caught by the cat
         //Or if it hit the floor.
-        this.fall = function () {
+        this.fall = function (food) {
+            let foodType = '';
             if (this.y < canvas.height - this.foodHeight) {
                 this.y += this.foodSpeed;
             } else {
@@ -119,20 +90,20 @@ window.onload = function () {
                     smashCounter++;
                 }
 
-                player.foodsMissed += 1;
+                cat.foodsMissed += 1;
                 this.changeState();
-                this.chooseFood();
             }
-            this.checkIfCaught();
+            this.checkIfCaught(food);
         }
 
-        //Checks if the food has been caught by the player
-        //If it is caught, the player score and food counter is increased, and
+        //Checks if the food has been caught by the cat
+        //If it is caught, the cat score and food counter is increased, and
         //the current food changes its state and becomes a different food.
-        this.checkIfCaught = function () {
-            if (this.y >= player.y) {
-                if ((this.x > player.x && this.x < (player.x + player.playerWidth)) ||
-                    (this.x + this.foodWidth > player.x && this.x + this.foodWidth < (player.x + player.playerWidth))) {
+        this.checkIfCaught = function (food) {
+            if (this.y >= cat.y) {
+                if ((this.x > cat.x && this.x < (cat.x + cat.catWidth)) ||
+                    (this.x + this.foodWidth > cat.x && this.x + this.foodWidth < (cat.x + cat.catWidth))) {
+                    
                     catchSounds[catchSoundCounter].play();
                     if (catchSoundCounter == 4) {
                         catchSoundCounter = 0;
@@ -140,11 +111,14 @@ window.onload = function () {
                         catchSoundCounter++;
                     }
 
-                    player.score += this.foodScore;
-                    player.foodsCollected += 1;
+                    cat.score += this.foodScore;
+                    cat.foodsCollected += 1;
 
                     this.changeState();
-                    this.chooseFood();
+                    if (food.foodType === 'melon') {
+                        document.getElementById('melonGif').classList.add('melon-gif');
+                    }
+                 
                 }
             }
         }
@@ -169,10 +143,10 @@ window.onload = function () {
     window.addEventListener("keydown", function (e) {
         e.preventDefault();
         if (e.keyCode == 37) {
-            player.moveLeft();
+            cat.moveLeft();
         } else if (e.keyCode == 39) {
-            player.moveRight();
-        } else if (e.keyCode == 13 && player.gameOver == true) {
+            cat.moveRight();
+        } else if (e.keyCode == 13 && cat.gameOver == true) {
             main();
             window.clearTimeout(timer);
         }
@@ -180,11 +154,11 @@ window.onload = function () {
 
     main();
 
-    //Fills an array of foods, creates a player and starts the game
+    //Fills an array of foods, creates a cat and starts the game
     function main() {
         contextBack.font = "bold 23px Velvetica";
         contextBack.fillStyle = "WHITE";
-        player = new Player();
+        cat = new Cat();
         foods = [];
 
         for (let i = 0; i < numberOfFoods; i++) {
@@ -204,32 +178,32 @@ window.onload = function () {
     //Checks for gameOver and makes each food in the array fall down.
     function updateGame() {
         music.play();
-        if (player.foodsMissed >= 10) {
-            player.gameOver = true;
+        if (cat.foodsMissed >= 10) {
+            cat.gameOver = true;
         }
 
         for (let j = 0; j < foods.length; j++) {
-            foods[j].fall();
+            foods[j].fall(foods[j]);
         }
         timer = window.setTimeout(updateGame, 30);
     }
 
-    //Draws the player and foods on the screen as well as info in the HUD.
+    //Draws the cat and foods on the screen as well as info in the HUD.
     function drawGame() {
-        if (player.gameOver == false) {
+        if (cat.gameOver == false) {
             context.clearRect(0, 0, canvas.width, canvas.height);
             contextBack.clearRect(0, 0, canvasBack.width, canvasBack.height);
 
             contextBack.drawImage(background, 0, 0);
-            player.render();
+            cat.render();
 
             for (let j = 0; j < foods.length; j++) {
                 foods[j].render();
             }
-            contextBack.fillText("SCORE: " + player.score, 50, 50);
+            contextBack.fillText("SCORE: " + cat.score, 50, 50);
             contextBack.fillText("HI SCORE: " + hiscore, 250, 50);
-            contextBack.fillText("FOOD CAUGHT: " + player.foodsCollected, 500, 50);
-            contextBack.fillText("FOOD MISSED: " + player.foodsMissed, 780, 50);
+            contextBack.fillText("FOOD CAUGHT: " + cat.foodsCollected, 500, 50);
+            contextBack.fillText("FOOD MISSED: " + cat.foodsMissed, 780, 50);
         } else {
             //Different screen for game over.
             for (let i = 0; i < numberOfFoods; i++) {
@@ -237,8 +211,8 @@ window.onload = function () {
                 foods.pop();
             }
 
-            if (hiscore < player.score) {
-                hiscore = player.score;
+            if (hiscore < cat.score) {
+                hiscore = cat.score;
                 contextBack.fillText("NEW HI SCORE: " + hiscore, (canvas.width / 2) - 100, canvas.height / 2);
             }
             contextBack.fillText("PRESS ENTER TO RESTART", (canvas.width / 2) - 140, canvas.height / 2 + 50);
