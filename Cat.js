@@ -14,6 +14,7 @@ class Cat {
         this.y = 470;
         this.catImage = new Image();
         this.catImage.src = 'Images/cat.png';
+        this.flowerCaught = false;
     }
     //Draws the cat
     render () {

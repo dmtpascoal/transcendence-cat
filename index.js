@@ -1,8 +1,10 @@
 window.onload = function () {
+    
     const canvas = document.getElementById("canvas");
     const context = canvas.getContext("2d");
     const canvasBack = document.getElementById("backgroundCanvas");
     const contextBack = canvasBack.getContext("2d");
+    const gameOver = document.getElementById('gameOver');
 
     //Timer for the Timeout - needed in order to clear it
     let timer;
@@ -13,7 +15,9 @@ window.onload = function () {
     //Background image, music track, and arrays of sounds.
     let background = new Image();
     background.src = 'Images/space.jpg';
- 
+    let overImage = new Image();
+    overImage.src = 'Images/background.gif';
+    gameOver.style.display = 'none'
 
     let music = new Audio();
     music.src = 'Audio/Mountains.mp3';
@@ -28,6 +32,7 @@ window.onload = function () {
         } else if (e.keyCode == 39) {
             cat.moveRight();
         } else if (e.keyCode == 13 && cat.gameOver == true) {
+            gameOver.style.display = 'none'
             main();
             window.clearTimeout(timer);
         }
@@ -59,7 +64,7 @@ window.onload = function () {
     //Checks for gameOver and makes each food in the array fall down.
     function updateGame() {
         music.play();
-        if (cat.foodsMissed >= 10) {
+        if ((cat.foodsMissed >= 10)|| (cat.flowerCaught)) {
             cat.gameOver = true;
         }
 
@@ -91,15 +96,17 @@ window.onload = function () {
                 console.log("Speed was" + foods[foods.length - 1].foodSpeed);
                 foods.pop();
             }
-
             if (hiscore < cat.score) {
                 hiscore = cat.score;
                 contextBack.fillText("NEW HI SCORE: " + hiscore, (canvas.width / 2) - 100, canvas.height / 2);
             }
             contextBack.fillText("PRESS ENTER TO RESTART", (canvas.width / 2) - 140, canvas.height / 2 + 50);
             context.clearRect(0, 0, canvas.width, canvas.height);
+            contextBack.clearRect(0, 0, canvas.width, canvas.height);
+            gameOver.style.display = 'block'
 
         }
+
         window.requestAnimationFrame(drawGame);
 
     }

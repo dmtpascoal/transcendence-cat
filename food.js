@@ -28,7 +28,7 @@ class Food {
         this.foodImage = new Image();
         this.foodSpeed = Math.floor(Math.random() * 3 + 1);
         this.x = Math.random() * (canvas.width - this.foodWidth);
-        this.y = Math.random() * -canvas.height - this.foodHeight;
+        this.y = 0;
     }
     chooseFood() {
         if (this.foodNumber == 0) {
@@ -37,18 +37,17 @@ class Food {
             this.foodImage.src = 'Images/shrimp.png';
         } else if (this.foodNumber == 1) {
             this.foodType = "fish";
-            this.foodScore = 10 * this.foodSpeed;
+            this.foodScore = 15 * this.foodSpeed;
             this.foodImage.src = 'Images/fish.png';
         } else if (this.foodNumber == 2) {
             this.foodType = "birds";
-            this.foodScore = 15 * this.foodSpeed;
+            this.foodScore = 20 * this.foodSpeed;
             this.foodImage.src = 'Images/bird.png';
         } else if (this.foodNumber == 4) {
             this.foodType = "evil-flower";
             this.foodScore = 5 * this.foodSpeed;
             this.foodImage.src = 'Images/flower.png';
         }
-
         return this.foodType;
     }
 
@@ -56,18 +55,18 @@ class Food {
     //While falling checks if the food has been caught by the cat
     //Or if it hit the floor.
     fall(food) {
-        let foodType = '';
         if (this.y < canvas.height - this.foodHeight) {
             this.y += this.foodSpeed;
-        } else {
+        }
+        else {
             smashSounds[smashCounter].play();
             if (smashCounter == 4) {
                 smashCounter = 0;
             } else {
                 smashCounter++;
             }
-
-            cat.foodsMissed += 1;
+            if (this.foodType != 'evil-flower') {
+            cat.foodsMissed += 1;}
             this.changeState();
         }
         this.checkIfCaught(food);
@@ -88,13 +87,13 @@ class Food {
                 }
 
                 cat.score += this.foodScore;
-                cat.foodsCollected += 1;
-
-                this.changeState();
-                if (food.foodType === 'flower') {
-                    document.getElementById('flowerGif').classList.add('flower-gif');
+                if (food.foodType != 'evil-flower') {
+                    cat.foodsCollected += 1;
                 }
-             
+                else {
+                    cat.flowerCaught = true;
+                }
+                this.changeState();
             }
         }
     }

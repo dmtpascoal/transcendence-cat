@@ -1,11 +1,16 @@
 canvas {
-    border: 20px solid black;
     position: absolute;
     background-color: transparent;
+    top: 10px;
 }
-/*.flower-gif {
+#gameOver {
+    width: 1024;
+    height: 650;
     position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}*/
+    top: 10px;
+    
+}
+img {
+    width: 1024;
+    height: 650;
+}
