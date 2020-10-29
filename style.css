@@ -3,6 +3,9 @@ canvas {
     position: absolute;
     background-color: transparent;
 }
-.melon-gif {
+/*.flower-gif {
     position: absolute;
-}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}*/

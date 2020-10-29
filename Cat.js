@@ -7,16 +7,14 @@ class Cat {
         this.score = 0;
         this.foodsCollected = 0;
         this.foodsMissed = 0;
-        this.catWidth = 230;
+        this.catWidth = 180;
         this.catHeight = 230;
         this.catSpeed = 50;
         this.x = 400;
-        this.y = 420;
+        this.y = 470;
         this.catImage = new Image();
         this.catImage.src = 'Images/cat.png';
     }
-
-
     //Draws the cat
     render () {
         context.drawImage(this.catImage, this.x, this.y);
